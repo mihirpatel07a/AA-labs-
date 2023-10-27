@@ -1,75 +1,76 @@
-// Online C++ compiler to run C++ program online
+//line segment
 
 #include <bits/stdc++.h>
-
 using namespace std;
 
-int main() {
-  int flag  = 0;
-   cout<<"enter string:";
-   string t;
-   cin>>t;
-   
-   cout<<"enter pattern string:";
-   string p;
-   cin>>p;
-   
-   int n = t.length();
-   int m = p.length();
-   int q =13;
-   
-   int d = 10;
-   
-   int p1 = 0;
-   int t0 = 0;
-   
-   for(int i=0 ; i<m; i++)
-   {
-       p1 = (d*p1 + p[i])%q;
-       t0  = (d*t0 + t[i])%q;
-   }
-   
-   
-   int ts[n-m+1] ;
-   ts[0] = t0;
-   
-   cout<<ts[0];
-   int h = pow(d,m-1);
-   
-   
-  for(int s=0; s<=n-m; s++)
-  {
-      if(p1 == ts[s])
-      {
-          int i=0;
-          while(i<m && p[i] == t[s+i])
-          {
-              i++;
-          }
-          
-          if(i == m)
-          {
-              cout<<"pattern occurs with shift"<<s<<endl;
-              flag =1 ;
-          }
-      }
-      
-      if(s<n-m)
-      {
-          ts[s+1] = ((ts[s] - (t[s+1]*h))*d + t[s+1])%q;
-          
-          if(ts[s+1] < 0)
-          {
-               ts[s+1] += q;
-          }
-      }
-      
-      
-  }
-  
-  
-  if(flag == 0)
-     cout<<"string does not match";
-    return 0;
+struct point{
+    int x;
+    int y;
+};
+
+int direction(point p1, point p2, point p3){
+    int ax = p3.x - p1.x;
+    int ay = p3.y - p1.y;
+    
+    int bx = p2.x - p1.x;
+    int by = p2.y - p1.y;
+    
+    int ans = ax*by - ay*bx;
+    return ans;
 }
 
+bool OnSegment(point p1, point p2, point p3){
+    if((min(p1.x,p2.x) <= p3.x && p3.x <= max(p1.x, p2.x)) && (min(p1.y,p2.y) <= p3.y && p3.y <= max(p1.y, p2.y))){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool segment_intersection(point p1, point p2, point p3, point p4){
+    int d1 = direction(p3, p4, p1);
+    int d2 = direction(p3, p4, p2);
+    int d3 = direction(p1, p2, p3);
+    int d4 = direction(p1, p2, p4);
+    
+    if(d1*d2 < 0 && d3*d4 < 0){
+        return true;
+    }
+    else if(d1 == 0 && OnSegment(p3,p4,p1)){
+        return true;
+    }
+    else if(d2 == 0 && OnSegment(p3,p4,p2)){
+        return true;
+    }
+    else if(d3 == 0 && OnSegment(p1,p2,p3)){
+        return true;
+    }
+    else if(d4 == 0 && OnSegment(p1,p2,p4)){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+int main()
+{
+    struct point p[4];
+    
+    for(int i=0 ; i<4 ; i++){
+        int tx, ty;
+        cin >> tx >> ty;
+        p[i].x = tx;
+        p[i].y = ty;
+    }
+    
+    if(segment_intersection(p[0], p[1], p[2], p[3]) == true){
+        cout << "segment intersects";
+    }
+    else{
+        cout << "segment not intersect";
+    }
+    
+    return 0;
+}
